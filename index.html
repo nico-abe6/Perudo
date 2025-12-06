@@ -210,7 +210,7 @@
 
         .result-form-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr;
+            grid-template-columns: 1fr 1fr;
             gap: var(--spacing-md);
             margin-bottom: var(--spacing-md);
         }
@@ -429,8 +429,8 @@
     </div>
 
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/11.0.0/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
     <script>
         // Firebase Configuration
@@ -451,6 +451,7 @@
         // State management
         let players = [];
         let games = [];
+        let savedPlayerNames = [];
         let isOnline = true;
 
         // Initialize app
@@ -460,6 +461,7 @@
                 const data = JSON.parse(saved);
                 players = data.players || [];
                 games = data.games || [];
+                savedPlayerNames = data.savedPlayerNames || [];
             }
             
             setDefaultDate();
@@ -548,7 +550,16 @@
 
         function renderPlayerInputs() {
             const list = document.getElementById('playersList');
-            list.innerHTML = players.map(player => `
+            
+            // Create datalist with saved player names
+            const datalistId = 'playerNamesList';
+            const datalistHTML = `
+                <datalist id="${datalistId}">
+                    ${savedPlayerNames.map(name => `<option value="${name}">`).join('')}
+                </datalist>
+            `;
+            
+            list.innerHTML = datalistHTML + players.map(player => `
                 <div class="player-item">
                     <input 
                         type="text" 
@@ -556,6 +567,7 @@
                         value="${player.name}"
                         data-player-id="${player.id}"
                         class="player-name-input"
+                        list="${datalistId}"
                     />
                     <button type="button" data-player-id="${player.id}" class="player-remove-btn">Rimuovi</button>
                 </div>
@@ -584,7 +596,16 @@
         function updatePlayerName(id, name) {
             const player = players.find(p => p.id === id);
             if (player) player.name = name;
-            renderResults();
+            
+            // Add name to saved names if not already present
+            if (name && name.trim() && !savedPlayerNames.includes(name.trim())) {
+                savedPlayerNames.push(name.trim());
+                savedPlayerNames.sort();
+                savePlayerNamesToStorage();
+                renderPlayerInputs(); // Re-render to update datalist
+            } else {
+                renderResults();
+            }
         }
 
         // Results management
@@ -607,9 +628,11 @@
                                 max="${players.length}"
                                 placeholder="Posizione"
                                 id="pos-${player.id}"
+                                class="position-input"
+                                data-player-id="${player.id}"
                             />
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="nds-group-${player.id}">
                             <label>Dadi alla sconfitta (nds)</label>
                             <input 
                                 type="number" 
@@ -619,7 +642,7 @@
                                 id="nds-${player.id}"
                             />
                         </div>
-                        <div class="form-group">
+                        <div class="form-group" id="ndv-group-${player.id}" style="display: none;">
                             <label>Dadi alla vittoria (ndv)</label>
                             <input 
                                 type="number" 
@@ -632,6 +655,26 @@
                     </div>
                 </div>
             `).join('');
+            
+            // Attach event listeners to position inputs
+            document.querySelectorAll('.position-input').forEach(input => {
+                input.addEventListener('input', function() {
+                    const playerId = this.dataset.playerId;
+                    const position = parseInt(this.value);
+                    const ndsGroup = document.getElementById(`nds-group-${playerId}`);
+                    const ndvGroup = document.getElementById(`ndv-group-${playerId}`);
+                    
+                    if (position === 1) {
+                        ndsGroup.style.display = 'none';
+                        ndvGroup.style.display = 'block';
+                        document.getElementById(`nds-${playerId}`).value = '';
+                    } else {
+                        ndsGroup.style.display = 'block';
+                        ndvGroup.style.display = 'none';
+                        document.getElementById(`ndv-${playerId}`).value = '';
+                    }
+                });
+            });
         }
 
         // Points calculation
@@ -665,15 +708,28 @@
 
             players.forEach(player => {
                 const pos = parseInt(document.getElementById(`pos-${player.id}`).value);
-                const nds = parseInt(document.getElementById(`nds-${player.id}`).value);
-                const ndv = parseInt(document.getElementById(`ndv-${player.id}`).value);
+                const ndsValue = document.getElementById(`nds-${player.id}`).value;
+                const ndvValue = document.getElementById(`ndv-${player.id}`).value;
+                
+                const isWinner = pos === 1;
+                const nds = isWinner ? 0 : parseInt(ndsValue);
+                const ndv = isWinner ? parseInt(ndvValue) : 0;
 
-                if (isNaN(pos) || isNaN(nds) || isNaN(ndv)) {
+                if (isNaN(pos)) {
+                    hasError = true;
+                    return;
+                }
+                
+                if (isWinner && isNaN(ndv)) {
+                    hasError = true;
+                    return;
+                }
+                
+                if (!isWinner && isNaN(nds)) {
                     hasError = true;
                     return;
                 }
 
-                const isWinner = pos === 1;
                 const points = calculatePoints(pos, ng, nds, ndv, isWinner);
 
                 gameResults.push({
@@ -722,13 +778,29 @@
         function saveData(game) {
             // Salva localmente
             games.push(game);
-            localStorage.setItem('perudoData', JSON.stringify({ players: [], games }));
+            
+            // Add player names to saved names
+            game.players.forEach(playerName => {
+                if (playerName && !savedPlayerNames.includes(playerName)) {
+                    savedPlayerNames.push(playerName);
+                }
+            });
+            savedPlayerNames.sort();
+            
+            localStorage.setItem('perudoData', JSON.stringify({ players: [], games, savedPlayerNames }));
             
             // Salva su Firebase
             db.ref('games/' + game.id).set(game).catch(error => {
                 console.log('Errore salvataggio:', error);
                 showAlert('Errore di sincronizzazione', 'error');
             });
+        }
+        
+        function savePlayerNamesToStorage() {
+            const saved = localStorage.getItem('perudoData');
+            const data = saved ? JSON.parse(saved) : { players: [], games: [] };
+            data.savedPlayerNames = savedPlayerNames;
+            localStorage.setItem('perudoData', JSON.stringify(data));
         }
 
         // Leaderboard

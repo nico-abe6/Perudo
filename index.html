@@ -153,10 +153,50 @@
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
+            flex-shrink: 0;
         }
 
         .player-item button:hover {
             background-color: #c0392b;
+        }
+
+        .player-input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+
+        .player-suggestions {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid var(--color-border);
+            border-top: none;
+            border-radius: 0 0 6px 6px;
+            max-height: 200px;
+            overflow-y: auto;
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none;
+        }
+
+        .player-suggestions.show {
+            display: block;
+        }
+
+        .suggestion-item {
+            padding: 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .suggestion-item:hover {
+            background-color: #f5f5f5;
+        }
+
+        .suggestion-item:last-child {
+            border-bottom: none;
         }
 
         .btn {
@@ -551,36 +591,52 @@
         function renderPlayerInputs() {
             const list = document.getElementById('playersList');
             
-            // Create datalist with saved player names
-            const datalistId = 'playerNamesList';
-            const datalistHTML = `
-                <datalist id="${datalistId}">
-                    ${savedPlayerNames.map(name => `<option value="${name}">`).join('')}
-                </datalist>
-            `;
-            
-            list.innerHTML = datalistHTML + players.map(player => `
+            list.innerHTML = players.map(player => `
                 <div class="player-item">
-                    <input 
-                        type="text" 
-                        placeholder="Nome giocatore" 
-                        value="${player.name}"
-                        data-player-id="${player.id}"
-                        class="player-name-input"
-                        list="${datalistId}"
-                    />
+                    <div class="player-input-wrapper">
+                        <input 
+                            type="text" 
+                            placeholder="Nome giocatore" 
+                            value="${player.name}"
+                            data-player-id="${player.id}"
+                            class="player-name-input"
+                            autocomplete="off"
+                        />
+                        <div class="player-suggestions" data-player-id="${player.id}"></div>
+                    </div>
                     <button type="button" data-player-id="${player.id}" class="player-remove-btn">Rimuovi</button>
                 </div>
             `).join('');
             
-            // Attach event listeners for name inputs and remove buttons
+            // Attach event listeners for name inputs
             document.querySelectorAll('.player-name-input').forEach(input => {
+                const playerId = parseInt(input.dataset.playerId);
+                const suggestionsDiv = document.querySelector(`.player-suggestions[data-player-id="${playerId}"]`);
+                
+                // Show suggestions on focus
+                input.addEventListener('focus', function() {
+                    showSuggestions(playerId, this.value);
+                });
+                
+                // Filter suggestions on input
+                input.addEventListener('input', function() {
+                    showSuggestions(playerId, this.value);
+                });
+                
+                // Update player name on change
                 input.addEventListener('change', function() {
-                    const playerId = parseInt(this.dataset.playerId);
                     updatePlayerName(playerId, this.value);
+                });
+                
+                // Hide suggestions on blur (with delay for click)
+                input.addEventListener('blur', function() {
+                    setTimeout(() => {
+                        suggestionsDiv.classList.remove('show');
+                    }, 200);
                 });
             });
             
+            // Attach event listeners for remove buttons
             document.querySelectorAll('.player-remove-btn').forEach(btn => {
                 btn.addEventListener('click', function(e) {
                     e.preventDefault();
@@ -591,6 +647,38 @@
             });
             
             renderResults();
+        }
+        
+        function showSuggestions(playerId, filter) {
+            const suggestionsDiv = document.querySelector(`.player-suggestions[data-player-id="${playerId}"]`);
+            
+            if (!suggestionsDiv) return;
+            
+            const filtered = savedPlayerNames.filter(name => 
+                name.toLowerCase().includes(filter.toLowerCase())
+            );
+            
+            if (filtered.length === 0) {
+                suggestionsDiv.classList.remove('show');
+                return;
+            }
+            
+            suggestionsDiv.innerHTML = filtered.map(name => `
+                <div class="suggestion-item" data-name="${name}">${name}</div>
+            `).join('');
+            
+            // Add click handlers to suggestions
+            suggestionsDiv.querySelectorAll('.suggestion-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const selectedName = this.dataset.name;
+                    const input = document.querySelector(`.player-name-input[data-player-id="${playerId}"]`);
+                    input.value = selectedName;
+                    updatePlayerName(playerId, selectedName);
+                    suggestionsDiv.classList.remove('show');
+                });
+            });
+            
+            suggestionsDiv.classList.add('show');
         }
 
         function updatePlayerName(id, name) {

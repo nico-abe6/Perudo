@@ -519,6 +519,7 @@
                 } else {
                     games = [];
                 }
+                extractPlayerNamesFromGames();
                 updateLeaderboard();
                 updateGameHistory();
                 updateSyncStatus();
@@ -535,6 +536,7 @@
                 } else {
                     games = [];
                 }
+                extractPlayerNamesFromGames();
                 updateLeaderboard();
                 updateGameHistory();
                 updateSyncStatus();
@@ -545,6 +547,30 @@
                 isOnline = snap.val();
                 updateSyncStatus();
             });
+        }
+        
+        function extractPlayerNamesFromGames() {
+            // Extract all unique player names from game history
+            const namesFromGames = new Set();
+            games.forEach(game => {
+                if (game.results) {
+                    game.results.forEach(result => {
+                        if (result.playerName && result.playerName.trim()) {
+                            namesFromGames.add(result.playerName.trim());
+                        }
+                    });
+                }
+            });
+            
+            // Merge with existing saved names
+            namesFromGames.forEach(name => {
+                if (!savedPlayerNames.includes(name)) {
+                    savedPlayerNames.push(name);
+                }
+            });
+            
+            savedPlayerNames.sort();
+            savePlayerNamesToStorage();
         }
 
         function updateSyncStatus() {

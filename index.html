@@ -48,6 +48,7 @@
             margin: 0 auto;
             position: relative;
             z-index: 1;
+            padding-bottom: 80px;
         }
         
         .floating-dice {
@@ -144,27 +145,46 @@
         }
 
         .nav-tabs {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
             display: flex;
-            gap: var(--spacing-sm);
-            margin-bottom: var(--spacing-lg);
-            border-bottom: 2px solid var(--color-border);
+            background-color: white;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            padding: 8px;
+            padding-bottom: max(8px, env(safe-area-inset-bottom));
         }
 
         .nav-tabs button {
-            padding: var(--spacing-md) var(--spacing-lg);
+            flex: 1;
+            padding: 8px 4px;
             border: none;
             background: none;
             color: var(--color-text-light);
             cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            border-bottom: 3px solid transparent;
+            font-size: 24px;
+            border-radius: 8px;
             transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+        
+        .nav-tabs button span {
+            font-size: 10px;
+            font-weight: 500;
         }
 
         .nav-tabs button.active {
             color: var(--color-primary);
-            border-bottom-color: var(--color-primary);
+            background-color: rgba(43, 122, 111, 0.1);
+        }
+        
+        .nav-tabs button:active {
+            transform: scale(0.95);
         }
 
         .tab-content {
@@ -499,6 +519,183 @@
         .sync-status.synced {
             color: var(--color-success);
         }
+        
+        .player-name-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--spacing-sm);
+            margin-top: var(--spacing-md);
+        }
+        
+        .player-name-tag {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #f9f9f9;
+            padding: 10px 12px;
+            border-radius: 6px;
+            border: 1px solid var(--color-border);
+        }
+        
+        .player-name-tag.editing {
+            background-color: #fff3cd;
+            border-color: var(--color-primary);
+        }
+        
+        .player-name-tag span {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        .player-name-tag input {
+            flex: 1;
+            padding: 4px 8px;
+            border: 1px solid var(--color-primary);
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        
+        .player-name-tag .button-group {
+            display: flex;
+            gap: 4px;
+            margin-left: 8px;
+            flex-shrink: 0;
+        }
+        
+        .player-name-tag button {
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 4px 8px;
+            cursor: pointer;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+        
+        .player-name-tag .btn-edit {
+            background-color: #3498db;
+        }
+        
+        .player-name-tag .btn-edit:hover {
+            background-color: #2980b9;
+        }
+        
+        .player-name-tag .btn-save {
+            background-color: var(--color-success);
+        }
+        
+        .player-name-tag .btn-save:hover {
+            background-color: #229954;
+        }
+        
+        .player-name-tag .btn-cancel {
+            background-color: #95a5a6;
+        }
+        
+        .player-name-tag .btn-cancel:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .player-name-tag .btn-delete {
+            background-color: var(--color-error);
+        }
+        
+        .player-name-tag .btn-delete:hover {
+            background-color: #c0392b;
+        }
+        
+        .add-player-form {
+            display: flex;
+            gap: var(--spacing-sm);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .add-player-form input {
+            flex: 1;
+        }
+        
+        .add-player-form button {
+            flex-shrink: 0;
+        }
+        
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: var(--spacing-lg);
+        }
+        
+        .chart-container {
+            background-color: white;
+            padding: var(--spacing-lg);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .chart-container h3 {
+            margin: 0 0 var(--spacing-md) 0;
+            color: var(--color-primary);
+            font-size: 18px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 300px;
+        }
+        
+        .podium-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: var(--spacing-md);
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .podium-card {
+            background: white;
+            padding: var(--spacing-md);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        .podium-card h3 {
+            margin: 0 0 var(--spacing-md) 0;
+            font-size: 16px;
+            color: var(--color-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .podium-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .podium-list li {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .podium-list li:last-child {
+            border-bottom: none;
+        }
+        
+        .podium-list .player-name {
+            font-weight: 500;
+        }
+        
+        .podium-list .count {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }
 
         @media (max-width: 600px) {
             .form-row {
@@ -525,11 +722,6 @@
             header h1 {
                 font-size: 24px;
             }
-
-            .nav-tabs button {
-                padding: var(--spacing-md) var(--spacing-sm);
-                font-size: 14px;
-            }
         }
     </style>
 </head>
@@ -545,13 +737,68 @@
         </header>
 
         <div class="nav-tabs">
-            <button class="tab-btn active" data-tab="nuova-partita">Nuova Partita</button>
-            <button class="tab-btn" data-tab="classifica">Classifica</button>
-            <button class="tab-btn" data-tab="storico">Storico</button>
+            <button class="tab-btn active" data-tab="home">
+                🏠
+                <span>Home</span>
+            </button>
+            <button class="tab-btn" data-tab="nuova-partita">
+                ➕
+                <span>Nuova</span>
+            </button>
+            <button class="tab-btn" data-tab="classifica">
+                🏆
+                <span>Classifica</span>
+            </button>
+            <button class="tab-btn" data-tab="storico">
+                📜
+                <span>Storico</span>
+            </button>
+            <button class="tab-btn" data-tab="giocatori">
+                👥
+                <span>Giocatori</span>
+            </button>
+        </div>
+
+        <!-- TAB: Home (Dashboard) -->
+        <div id="home" class="tab-content active">
+            <div class="card">
+                <h2>📊 Dashboard</h2>
+                
+                <div class="podium-grid">
+                    <div class="podium-card">
+                        <h3>🥇 Primi Posti</h3>
+                        <ul class="podium-list" id="firstPlaceList"></ul>
+                    </div>
+                    <div class="podium-card">
+                        <h3>🥈 Secondi Posti</h3>
+                        <ul class="podium-list" id="secondPlaceList"></ul>
+                    </div>
+                    <div class="podium-card">
+                        <h3>🥉 Terzi Posti</h3>
+                        <ul class="podium-list" id="thirdPlaceList"></ul>
+                    </div>
+                </div>
+                
+                <div class="dashboard-grid">
+                    <div class="chart-container">
+                        <h3>Punti Totali per Giocatore</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="totalPointsChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="chart-container">
+                        <h3>Evoluzione Classifica nel Tempo</h3>
+                        <div class="chart-wrapper">
+                            <canvas id="rankingEvolutionChart"></canvas>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- TAB: Nuova Partita -->
-        <div id="nuova-partita" class="tab-content active">
+        <div id="nuova-partita" class="tab-content">
             <div class="card">
                 <h2>Nuova Partita</h2>
                 
@@ -598,11 +845,30 @@
                 <div id="gameHistoryList"></div>
             </div>
         </div>
+        
+        <!-- TAB: Giocatori -->
+        <div id="giocatori" class="tab-content">
+            <div class="card">
+                <h2>Gestione Giocatori</h2>
+                <p style="color: var(--color-text-light); margin-bottom: var(--spacing-lg);">Aggiungi o rimuovi giocatori dal database. Questi nomi appariranno nel menu a tendina quando crei una nuova partita.</p>
+                
+                <div class="add-player-form">
+                    <input type="text" id="newPlayerName" placeholder="Nome nuovo giocatore" />
+                    <button class="btn btn-primary" id="addPlayerNameBtn">Aggiungi</button>
+                </div>
+                
+                <h3>Giocatori Salvati (<span id="playerCount">0</span>)</h3>
+                <div class="player-name-list" id="playerNameList"></div>
+            </div>
+        </div>
     </div>
 
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
     <script>
         // Firebase Configuration
@@ -641,6 +907,7 @@
             loadFromFirebase();
             setupFirebaseListeners();
             updateSyncStatus();
+            updateDashboard();
         }
 
         // Firebase Functions
@@ -729,8 +996,10 @@
                 e.target.classList.add('active');
                 const tabId = e.target.getAttribute('data-tab');
                 document.getElementById(tabId).classList.add('active');
+                if (tabId === 'home') updateDashboard();
                 if (tabId === 'classifica') updateLeaderboard();
                 if (tabId === 'storico') updateGameHistory();
+                if (tabId === 'giocatori') updatePlayerNameList();
             });
         });
 
@@ -1087,6 +1356,207 @@
                 </tr>
             `).join('');
         }
+        
+        // Dashboard and Statistics
+        let chartInstances = {};
+        
+        function updateDashboard() {
+            updatePodiumStats();
+            updateTotalPointsChart();
+            updateRankingEvolutionChart();
+        }
+        
+        function updatePodiumStats() {
+            const positions = { 1: {}, 2: {}, 3: {} };
+            
+            games.forEach(game => {
+                if (game.results) {
+                    game.results.forEach(result => {
+                        if (result.position >= 1 && result.position <= 3) {
+                            if (!positions[result.position][result.playerName]) {
+                                positions[result.position][result.playerName] = 0;
+                            }
+                            positions[result.position][result.playerName]++;
+                        }
+                    });
+                }
+            });
+            
+            // Update first place
+            const firstPlaceList = document.getElementById('firstPlaceList');
+            const firstPlaceData = Object.entries(positions[1]).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            firstPlaceList.innerHTML = firstPlaceData.length > 0 
+                ? firstPlaceData.map(([name, count]) => `
+                    <li><span class="player-name">${name}</span><span class="count">${count}</span></li>
+                `).join('')
+                : '<li style="color: #999;">Nessun dato</li>';
+            
+            // Update second place
+            const secondPlaceList = document.getElementById('secondPlaceList');
+            const secondPlaceData = Object.entries(positions[2]).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            secondPlaceList.innerHTML = secondPlaceData.length > 0
+                ? secondPlaceData.map(([name, count]) => `
+                    <li><span class="player-name">${name}</span><span class="count">${count}</span></li>
+                `).join('')
+                : '<li style="color: #999;">Nessun dato</li>';
+            
+            // Update third place
+            const thirdPlaceList = document.getElementById('thirdPlaceList');
+            const thirdPlaceData = Object.entries(positions[3]).sort((a, b) => b[1] - a[1]).slice(0, 5);
+            thirdPlaceList.innerHTML = thirdPlaceData.length > 0
+                ? thirdPlaceData.map(([name, count]) => `
+                    <li><span class="player-name">${name}</span><span class="count">${count}</span></li>
+                `).join('')
+                : '<li style="color: #999;">Nessun dato</li>';
+        }
+        
+        function updateTotalPointsChart() {
+            const playerStats = {};
+            
+            games.forEach(game => {
+                if (game.results) {
+                    game.results.forEach(result => {
+                        if (!playerStats[result.playerName]) {
+                            playerStats[result.playerName] = 0;
+                        }
+                        playerStats[result.playerName] += result.points;
+                    });
+                }
+            });
+            
+            const sorted = Object.entries(playerStats)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+            
+            const ctx = document.getElementById('totalPointsChart');
+            if (!ctx) return;
+            
+            // Destroy existing chart
+            if (chartInstances.totalPoints) {
+                chartInstances.totalPoints.destroy();
+            }
+            
+            chartInstances.totalPoints = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: sorted.map(([name]) => name),
+                    datasets: [{
+                        label: 'Punti Totali',
+                        data: sorted.map(([, points]) => points),
+                        backgroundColor: 'rgba(43, 122, 111, 0.8)',
+                        borderColor: 'rgba(43, 122, 111, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        }
+        
+        function updateRankingEvolutionChart() {
+            // Sort games by date
+            const sortedGames = [...games].sort((a, b) => new Date(a.date) - new Date(b.date));
+            
+            // Track cumulative points over time
+            const playerEvolution = {};
+            const dates = [];
+            
+            sortedGames.forEach(game => {
+                if (game.results && game.date) {
+                    dates.push(new Date(game.date).toLocaleDateString('it-IT', { month: 'short', day: 'numeric' }));
+                    
+                    game.results.forEach(result => {
+                        if (!playerEvolution[result.playerName]) {
+                            playerEvolution[result.playerName] = [];
+                        }
+                    });
+                    
+                    // Update cumulative points for all players
+                    Object.keys(playerEvolution).forEach(playerName => {
+                        const lastPoints = playerEvolution[playerName].length > 0 
+                            ? playerEvolution[playerName][playerEvolution[playerName].length - 1]
+                            : 0;
+                        
+                        const gameResult = game.results.find(r => r.playerName === playerName);
+                        const newPoints = gameResult ? lastPoints + gameResult.points : lastPoints;
+                        
+                        playerEvolution[playerName].push(newPoints);
+                    });
+                }
+            });
+            
+            // Get top 5 players by final points
+            const topPlayers = Object.entries(playerEvolution)
+                .map(([name, points]) => ({ name, finalPoints: points[points.length - 1] || 0 }))
+                .sort((a, b) => b.finalPoints - a.finalPoints)
+                .slice(0, 5)
+                .map(p => p.name);
+            
+            const colors = [
+                'rgba(43, 122, 111, 1)',
+                'rgba(52, 152, 219, 1)',
+                'rgba(231, 76, 60, 1)',
+                'rgba(241, 196, 15, 1)',
+                'rgba(155, 89, 182, 1)'
+            ];
+            
+            const datasets = topPlayers.map((playerName, index) => ({
+                label: playerName,
+                data: playerEvolution[playerName],
+                borderColor: colors[index],
+                backgroundColor: colors[index].replace('1)', '0.1)'),
+                borderWidth: 2,
+                tension: 0.4,
+                fill: false
+            }));
+            
+            const ctx = document.getElementById('rankingEvolutionChart');
+            if (!ctx) return;
+            
+            // Destroy existing chart
+            if (chartInstances.rankingEvolution) {
+                chartInstances.rankingEvolution.destroy();
+            }
+            
+            chartInstances.rankingEvolution = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    },
+                    interaction: {
+                        mode: 'index',
+                        intersect: false
+                    }
+                }
+            });
+        }
 
         // Game history
         function updateGameHistory() {
@@ -1114,6 +1584,111 @@
                 </div>
             `).join('');
         }
+        
+        // Player name management
+        function updatePlayerNameList() {
+            const listDiv = document.getElementById('playerNameList');
+            const countSpan = document.getElementById('playerCount');
+            
+            if (!listDiv || !countSpan) return;
+            
+            countSpan.textContent = savedPlayerNames.length;
+            
+            if (savedPlayerNames.length === 0) {
+                listDiv.innerHTML = '<div class="empty-state" style="grid-column: 1/-1;">Nessun giocatore salvato</div>';
+                return;
+            }
+            
+            listDiv.innerHTML = savedPlayerNames.map(name => `
+                <div class="player-name-tag" id="tag-${name.replace(/[^a-zA-Z0-9]/g, '_')}">
+                    <span class="player-name-display">${name}</span>
+                    <input type="text" class="player-name-edit" value="${name}" style="display: none;" />
+                    <div class="button-group">
+                        <button class="btn-edit" onclick="editPlayerName('${name.replace(/'/g, "\\'")}')" title="Modifica">✏️</button>
+                        <button class="btn-save" onclick="savePlayerName('${name.replace(/'/g, "\\'")}')" style="display: none;" title="Salva">✓</button>
+                        <button class="btn-cancel" onclick="cancelEditPlayerName('${name.replace(/'/g, "\\'")}')" style="display: none;" title="Annulla">✕</button>
+                        <button class="btn-delete" onclick="removePlayerName('${name.replace(/'/g, "\\'")}')" title="Elimina">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        
+        function editPlayerName(name) {
+            const tagId = 'tag-' + name.replace(/[^a-zA-Z0-9]/g, '_');
+            const tag = document.getElementById(tagId);
+            if (!tag) return;
+            
+            tag.classList.add('editing');
+            tag.querySelector('.player-name-display').style.display = 'none';
+            tag.querySelector('.player-name-edit').style.display = 'block';
+            tag.querySelector('.btn-edit').style.display = 'none';
+            tag.querySelector('.btn-delete').style.display = 'none';
+            tag.querySelector('.btn-save').style.display = 'inline-block';
+            tag.querySelector('.btn-cancel').style.display = 'inline-block';
+            tag.querySelector('.player-name-edit').focus();
+            tag.querySelector('.player-name-edit').select();
+        }
+        
+        function savePlayerName(oldName) {
+            const tagId = 'tag-' + oldName.replace(/[^a-zA-Z0-9]/g, '_');
+            const tag = document.getElementById(tagId);
+            if (!tag) return;
+            
+            const newName = tag.querySelector('.player-name-edit').value.trim();
+            
+            if (!newName) {
+                alert('Il nome non può essere vuoto');
+                return;
+            }
+            
+            if (newName !== oldName && savedPlayerNames.includes(newName)) {
+                alert('Questo nome esiste già');
+                return;
+            }
+            
+            // Update the name in the array
+            const index = savedPlayerNames.indexOf(oldName);
+            if (index !== -1) {
+                savedPlayerNames[index] = newName;
+                savedPlayerNames.sort();
+                savePlayerNamesToStorage();
+                updatePlayerNameList();
+            }
+        }
+        
+        function cancelEditPlayerName(name) {
+            updatePlayerNameList();
+        }
+        
+        function addPlayerName() {
+            const input = document.getElementById('newPlayerName');
+            const name = input.value.trim();
+            
+            if (!name) {
+                alert('Inserisci un nome');
+                return;
+            }
+            
+            if (savedPlayerNames.includes(name)) {
+                alert('Questo giocatore esiste già');
+                return;
+            }
+            
+            savedPlayerNames.push(name);
+            savedPlayerNames.sort();
+            savePlayerNamesToStorage();
+            updatePlayerNameList();
+            input.value = '';
+            input.focus();
+        }
+        
+        function removePlayerName(name) {
+            if (!confirm(`Rimuovere ${name} dal database?`)) return;
+            
+            savedPlayerNames = savedPlayerNames.filter(n => n !== name);
+            savePlayerNamesToStorage();
+            updatePlayerNameList();
+        }
 
         // Setup button listeners on DOM ready (iOS compatible)
         document.addEventListener('DOMContentLoaded', function() {
@@ -1128,6 +1703,26 @@
                 e.preventDefault();
                 saveGame();
             });
+            
+            // Add Player Name button
+            const addPlayerNameBtn = document.getElementById('addPlayerNameBtn');
+            if (addPlayerNameBtn) {
+                addPlayerNameBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    addPlayerName();
+                });
+            }
+            
+            // Enter key on new player name input
+            const newPlayerNameInput = document.getElementById('newPlayerName');
+            if (newPlayerNameInput) {
+                newPlayerNameInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        addPlayerName();
+                    }
+                });
+            }
         });
 
         // Initialize on load
